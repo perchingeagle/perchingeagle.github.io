@@ -62,7 +62,6 @@ function buildCharts(sampleId) {
 
     // 4. Create a variable that filters the samples for the object with the desired sample number.
     const  samples = allSamples.filter((item) => item.id === sampleId);
-    console.log(samples);
 
     //  5. Create a variable that holds the first sample in the array.
     const sample = samples[0];
@@ -109,6 +108,55 @@ function buildCharts(sampleId) {
     };
     // 10. Use Plotly to plot the data with the layout. 
     Plotly.newPlot("bar", barData, barLayout);
+
+    const sampleValues = topTen.map((item) => item.sample_values)
+
+    // 1. Create the trace for the bubble chart.
+    const bubbleData = [
+      {
+        x: topTen.map((item) => item.otu_ids),
+        y: sampleValues,
+        text: topTen.map((item) => item.otu_labels),
+        mode: "markers",
+        marker: {
+          color: ["#FF33FF", "#FF0033", "#6699FF", 
+                  "#66FF33", "#00CCFF", "#99CCCC",
+                  "#993333", "#666600","#e7a4b6",
+                  "#996633"],
+          size: sampleValues
+        }
+      }
+    ];
     
+    // 2. Create the layout for the bubble chart.
+    const bubbleLayout = {
+      title: "Bacteria Cultures Per Sample"
+    };
+    
+    // 3. Use Plotly to plot the data with the layout.
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
+
+    
+    // 4. Create the trace for the gauge chart.
+    let metadata = data.metadata.filter((item) => item.id === parseInt(sampleId))[0];
+    console.log(metadata);
+    console.log(sampleId);
+
+    const gaugeData = [{
+      domain: {x: [0,1], y: [0, 1]},
+      value: parseFloat(metadata.wfreq),
+      type: "indicator",
+      mode: "gauge+number"
+    }];
+        
+    // 5. Create the layout for the gauge chart.
+    const gaugeLayout = {};
+    
+    // 6. Use Plotly to plot the gauge data and layout.
+    Plotly.newPlot("gauge", gaugeData);
+
   });
+
 }
+
+
